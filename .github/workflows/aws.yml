@@ -19,6 +19,12 @@ jobs:
           sudo apt-get install -y ssh
 
       - name: Deploy code
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan 3.145.39.92 >> ~/.ssh/known_hosts
-          scp -r -i ~/.ssh/id_rsa ./apps/cvforge-fe <ec2-user>@3.145.39.92:apps/cvforge-fe
+          scp -r -i ~/.ssh/id_rsa ./ cvforge-admin-user@3.145.39.92:./apps/cvforge-fe/
